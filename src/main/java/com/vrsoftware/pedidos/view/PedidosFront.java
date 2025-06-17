@@ -1,5 +1,6 @@
 package com.vrsoftware.pedidos.view;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vrsoftware.pedidos.model.Pedido;
 import okhttp3.*;
@@ -97,6 +98,13 @@ public class PedidosFront extends JFrame {
                         return;
                     }
 
+                    String responseBody = response.body().string();
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode node = mapper.readTree(responseBody);
+                    String id = node.get("id").asText();
+                    pedido.setId(id);
+
                     SwingUtilities.invokeLater(() -> {
                         pedidosPendentes.put(pedido.getId(), "ENVIADO, AGUARDANDO PROCESSO");
                         tableModel.addRow(new Object[]{pedido.getId(), "ENVIADO, AGUARDANDO PROCESSO"});
@@ -118,9 +126,7 @@ public class PedidosFront extends JFrame {
 
             client.newCall(request).enqueue(new Callback() {
                 @Override
-                public void onFailure(Call call, IOException ex) {
-                    // Opcional: log ou ignore
-                }
+                public void onFailure(Call call, IOException ex) {}
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {

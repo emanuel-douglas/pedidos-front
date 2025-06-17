@@ -16,7 +16,6 @@ public class Pedido {
     private int quantidade;
 
     public Pedido(String produto, int quantidade) {
-        this.id = UUID.randomUUID().toString();
         this.produto = produto;
         this.quantidade = quantidade;
     }
